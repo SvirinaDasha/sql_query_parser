@@ -1,0 +1,18 @@
+WHITESPACE = _{ " " | "\t" | "\n" }
+
+query = _{ select | insert | update | delete }
+
+select = { "SELECT" ~ columns ~ "FROM" ~ table ~ (where_clause)? }
+insert = { "INSERT INTO" ~ table ~ "VALUES" ~ "(" ~ values ~ ")" }
+update = { "UPDATE" ~ table ~ "SET" ~ assignments ~ (where_clause)? }
+delete = { "DELETE FROM" ~ table ~ (where_clause)? }
+
+columns = @{ identifier ~ ("," ~ WHITESPACE? ~ identifier)* }
+values = @{ literal ~ ("," ~ WHITESPACE? ~ literal)* }
+assignments = { identifier ~ "=" ~ literal ~ ("," ~ WHITESPACE? ~ identifier ~ "=" ~ literal)* }
+table = @{ identifier }
+where_clause = { "WHERE" ~ condition }
+condition = { identifier ~ operator ~ literal }
+operator = _{ "=" | "!=" | ">" | "<" }
+identifier = @{ ASCII_ALPHANUMERIC+ | "_" }
+literal = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" | ASCII_DIGIT+ }
